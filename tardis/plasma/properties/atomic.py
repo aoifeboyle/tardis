@@ -31,8 +31,20 @@ class Levels(BaseAtomicDataProperty):
         'g')
 
     def _filter_atomic_property(self, levels, selected_atoms):
-        return levels
-        # return levels[levels.atomic_number.isin(selected_atoms)]
+        updated_dataframe = levels.ix[:271]
+        new_row = updated_dataframe.ix[4].ix[2].ix[13].copy()
+        new_row['energy'] = 0.0
+        new_row['g'] = 1
+        new_row['metastable'] = True
+        new_row_2 = updated_dataframe.ix[4].ix[2].ix[13].copy()
+        new_row_2['energy'] = 0.0
+        new_row_2['g'] = 1
+        new_row_2['metastable'] = True
+        updated_dataframe.ix[(4,3,0)] = new_row
+        updated_dataframe.ix[(4,4,0)] = new_row_2
+        to_append = levels.ix[271:]
+        updated_dataframe = updated_dataframe.append(to_append)
+	return updated_dataframe
 
     def _set_index(self, levels):
         # levels = levels.set_index(['atomic_number', 'ion_number',
@@ -142,9 +154,26 @@ class IonizationData(BaseAtomicDataProperty):
         if np.alltrue(keys == values):
             return ionization_data
         else:
-            raise IncompleteAtomicData('ionization data for the ion (' +
-                                       str(keys[keys != values]) +
-                                       str(values[keys != values]) + ')')
+	    missing_energy = 3.4882446665699996e-10
+            updated_index = []
+            for atom in selected_atoms:
+                for ion in range(1, atom + 1):
+                    updated_index.append([atom, ion])
+            updated_index = np.array(updated_index)
+            updated_dataframe = pd.DataFrame(index=pd.MultiIndex.from_arrays(
+                updated_index.transpose().astype(int), names=['atomic_number', 'ion_number']),
+                columns=ionization_data.columns)
+	    for value in range(len(ionization_data)):
+	        updated_dataframe.ix[ionization_data.atomic_number.values[value]].ix[
+		ionization_data.ion_number.values[value]] = \
+		ionization_data.ix[ionization_data.atomic_number.values[value]].ix[
+		ionization_data.ion_number.values[value]]
+	    updated_dataframe.ix[4].ix[4]['ionization_energy'] = missing_energy
+            updated_dataframe = updated_dataframe.astype(float)
+            updated_index = pd.DataFrame(updated_index)
+            updated_dataframe['atomic_number'] = np.array(updated_index[0])
+            updated_dataframe['ion_number'] = np.array(updated_index[1])
+            return updated_dataframe
 
     def _set_index(self, ionization_data):
         return ionization_data.set_index(['atomic_number', 'ion_number'])
