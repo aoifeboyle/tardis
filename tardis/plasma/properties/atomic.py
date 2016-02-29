@@ -31,20 +31,21 @@ class Levels(BaseAtomicDataProperty):
         'g')
 
     def _filter_atomic_property(self, levels, selected_atoms):
-        updated_dataframe = levels.ix[:271]
-        new_row = updated_dataframe.ix[4].ix[2].ix[13].copy()
-        new_row['energy'] = 0.0
-        new_row['g'] = 1
-        new_row['metastable'] = True
-        new_row_2 = updated_dataframe.ix[4].ix[2].ix[13].copy()
-        new_row_2['energy'] = 0.0
-        new_row_2['g'] = 1
-        new_row_2['metastable'] = True
-        updated_dataframe.ix[(4,3,0)] = new_row
-        updated_dataframe.ix[(4,4,0)] = new_row_2
-        to_append = levels.ix[271:]
-        updated_dataframe = updated_dataframe.append(to_append)
-	return updated_dataframe
+        if 4 in selected_atoms:
+            updated_dataframe = levels.ix[:271]
+            new_row = updated_dataframe.ix[4].ix[2].ix[13].copy()
+            new_row['energy'] = 0.0
+            new_row['g'] = 1
+            new_row['metastable'] = True
+            new_row_2 = updated_dataframe.ix[4].ix[2].ix[13].copy()
+            new_row_2['energy'] = 0.0
+            new_row_2['g'] = 1
+            new_row_2['metastable'] = True
+            updated_dataframe.ix[(4,3,0)] = new_row
+            updated_dataframe.ix[(4,4,0)] = new_row_2
+            to_append = levels.ix[271:]
+            levels = updated_dataframe.append(to_append)
+        return levels
 
     def _set_index(self, levels):
         # levels = levels.set_index(['atomic_number', 'ion_number',
