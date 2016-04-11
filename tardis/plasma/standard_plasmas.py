@@ -110,8 +110,7 @@ class LegacyPlasmaArray(BasePlasma):
         else:
             self.nlte_species = None
 
-        if helium_treatment=='recomb-nlte':
-            plasma_modules += helium_nlte_properties
+        plasma_modules += helium_nlte_properties
 
         if helium_treatment=='numerical-nlte':
             plasma_modules += helium_numerical_nlte_properties
@@ -128,4 +127,4 @@ class LegacyPlasmaArray(BasePlasma):
             plasma_properties=plasma_modules, t_rad=t_rad,
             abundance=abundance, density=density,
             atomic_data=atomic_data, time_explosion=time_explosion,
-            j_blues=None, w=w, link_t_rad_t_electron=link_t_rad_t_electron)
+            j_blues=None, w=w, link_t_rad_t_electron=link_t_rad_t_electron, helium_treatment=helium_treatment)

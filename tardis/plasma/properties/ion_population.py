@@ -281,7 +281,7 @@ class IonNumberDensity(ProcessingPlasmaProperty):
         return calculate_block_ids_from_dataframe(phi)
 
     def calculate(self, phi, partition_function, number_density, level_boltzmann_factor, ionization_data,
-                  beta_rad, g, g_electron, w, t_rad, t_electrons, delta, zeta_data):
+                  beta_rad, g, g_electron, w, t_rad, t_electrons, delta, zeta_data, helium_treatment):
         n_e_convergence_threshold = 0.05
         n_electron = number_density.sum(axis=0)
         n_electron_iterations = 0
@@ -290,8 +290,7 @@ class IonNumberDensity(ProcessingPlasmaProperty):
             ion_number_density = self.calculate_with_n_electron(
                 phi, partition_function, number_density, n_electron)
             if hasattr(self.plasma_parent, 'plasma_properties_dict'):
-                if 'HeliumNLTE' in \
-                    self.plasma_parent.plasma_properties_dict.keys():
+                if helium_treatment=='recomb-nlte':
                     helium_population = self.calculate_he(
                         level_boltzmann_factor, n_electron,
                         ionization_data, beta_rad, g, g_electron, w, t_rad, t_electrons,

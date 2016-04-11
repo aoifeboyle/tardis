@@ -85,7 +85,7 @@ class HeliumNLTE(ProcessingPlasmaProperty):
         """
         return level_boltzmann_factor.ix[2,0].mul(
             g.ix[2,0], axis=0) * (1./(2*g.ix[2,1,0])) * \
-            (1/g_electron) * (1/(w**2)) * np.exp(
+            (1/g_electron) * (1/(w)) * np.exp(
             ionization_data.ionization_energy.ix[2,1] * beta_rad) * \
             electron_densities
 
